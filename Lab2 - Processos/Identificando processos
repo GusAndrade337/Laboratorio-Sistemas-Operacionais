@@ -1,0 +1,8 @@
+#include <stdio.h>
+#include <unistd.h>
+
+int main (void) {
+printf("Sou o processo filho %ld\n", (long)getpid());
+printf("Meu processo criador é %ld\n", (long)getppid());
+return 0;
+}
