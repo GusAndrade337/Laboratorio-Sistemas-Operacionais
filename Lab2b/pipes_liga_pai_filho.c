@@ -24,8 +24,8 @@ int main()
 		return 0;
 	}
 	else if (pid > 0) 
-    wait(NULL);
-		read(fds[0], value,2); 
+   		wait(NULL);
+		read(fds[0], &value,2); 
 		printf ("PARENT: value = %d\n",value);
 		return 0;
 	}
