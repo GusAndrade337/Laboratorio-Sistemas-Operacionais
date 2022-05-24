@@ -1,4 +1,4 @@
-// gcc main.c -o main && ./main
+//Avaliar se necessario compilar com -lpthread -lrt ou se é possível usar -pthread
 #define _GNU_SOURCE
 #include <stdlib.h>
 #include <malloc.h>
@@ -7,26 +7,42 @@
 #include <signal.h>
 #include <sched.h>
 #include <stdio.h>
-// 64kB stack
+#include <semaphore.h>
+
+//Primeira tentativa de resolução: Semaforos
+
+// 64kB stack (tamanho máximo da pilha de execução(?))
 #define FIBER_STACK 1024*64
+
 struct c {
     int saldo;
 };
+
 typedef struct c conta;
 conta from, to;
 int valor;
+
 // The child thread will execute this function
-int transferencia( void *arg)
+int transferencia(void *arg)
 {
     if (from.saldo >= valor){ // 2
+		sem_wait(Semaforo) // Coloca o semaforo imediatamente como wait. Impede que outros processos facam uso do recurso (lock)
         from.saldo -= valor;
         to.saldo += valor;
-    }
+		sem_post(Semaforo) // Coloca o semaforo imediatamente como livre, o recurso pode ser acessado novamente
+	}
     printf("Transferência concluída com sucesso!\n");
     printf("Saldo de c1: %d\n", from.saldo);
     printf("Saldo de c2: %d\n", to.saldo);
     return 0;
+	else (
+	printf("Não há dinheiro suficiente para realizar a transação\nValor Solicitado: %d",valor);
+    printf("Saldo de c1: %d\n", from.saldo);
+
 }
+// Para fazer uso do semáforo, eh necessário cria-lo externamente a qualquer função
+sem_t Semaforo
+
 int main()
 {
     void* stack;
