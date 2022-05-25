@@ -1,4 +1,4 @@
-//Avaliar se necessario compilar com -lpthread -lrt ou se é possível usar -pthread
+//g++ -pthread main.c -o main && ./main
 #define _GNU_SOURCE
 #include <stdlib.h>
 #include <malloc.h>
@@ -8,8 +8,13 @@
 #include <sched.h>
 #include <stdio.h>
 #include <semaphore.h>
+#include <pthread.h>
+#include <unistd.h>
 
 //Primeira tentativa de resolução: Semaforos
+
+// Para fazer uso do semáforo, eh necessário cria-lo externamente a qualquer função (e você não consegue compilar se declarar ele depois de uma função que chama ele)
+sem_t Semaforo;
 
 // 64kB stack (tamanho máximo da pilha de execução(?))
 #define FIBER_STACK 1024*64
@@ -23,31 +28,31 @@ conta from, to;
 int valor;
 
 // The child thread will execute this function
-int transferencia(void *arg)
-{
+int transferencia(void *arg){
     if (from.saldo >= valor){ // 2
-		sem_wait(Semaforo) // Coloca o semaforo imediatamente como wait. Impede que outros processos facam uso do recurso (lock)
+		sem_wait(&Semaforo); // Coloca o semaforo imediatamente como wait. Impede que outros processos facam uso do recurso (lock)
         from.saldo -= valor;
         to.saldo += valor;
-		sem_post(Semaforo) // Coloca o semaforo imediatamente como livre, o recurso pode ser acessado novamente
-	}
+		sem_post(&Semaforo); // Coloca o semaforo imediatamente como livre, o recurso pode ser acessado novamente
+	}else{
+	printf("Não há dinheiro suficiente para realizar a transação\nValor Solicitado: %d",valor);
+    printf("Saldo de c1: %d\n", from.saldo);
+    return 0;
+}
     printf("Transferência concluída com sucesso!\n");
     printf("Saldo de c1: %d\n", from.saldo);
     printf("Saldo de c2: %d\n", to.saldo);
     return 0;
-	else (
-	printf("Não há dinheiro suficiente para realizar a transação\nValor Solicitado: %d",valor);
-    printf("Saldo de c1: %d\n", from.saldo);
+  }
 
-}
-// Para fazer uso do semáforo, eh necessário cria-lo externamente a qualquer função
-sem_t Semaforo
 
 int main()
 {
     void* stack;
     pid_t pid;
     int i;
+    sem_init(&Semaforo, 0, 1);
+
     // Allocate the stack
     stack = malloc( FIBER_STACK );
     if ( stack == 0 )
@@ -74,4 +79,4 @@ int main()
     free( stack );
     printf("Transferências concluídas e memória liberada.\n");
     return 0;
-}
+};
