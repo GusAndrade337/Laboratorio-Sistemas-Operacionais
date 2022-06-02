@@ -1,6 +1,8 @@
 NOME: GUSTAVO ANDRADE DE PAULA
 TIA: 42081327
 
+ps:Código foi compilado no replit.com, usando o seguinte comando na chamada de terminal: g++ -pthread main.c -w  -o main && ./main (comando se encontra comentado no código também)
+
 1. A conta to pode receber mais de uma transferência simultânea;
 
 2. A conta from pode enviar mais de uma transferência simultânea;
