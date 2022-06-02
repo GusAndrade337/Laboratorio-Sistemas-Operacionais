@@ -8,7 +8,6 @@
 #include <sched.h>
 #include <stdio.h>
 #include <semaphore.h>
-#include <pthread.h>
 #include <unistd.h>
 
 
@@ -33,7 +32,8 @@ int transferencia(void *arg){
         from.saldo -= valor;
         to.saldo += valor;
 		sem_post(&Semaforo); // Coloca o semaforo imediatamente como livre, o recurso pode ser acessado novamente
-	}else if(to.saldo >= valor){
+	}else if(to.saldo >= valor ){
+        printf("Não há mais saldo para ser transferido de c1 para c2\n");
         sem_wait(&Semaforo);
         to.saldo -= valor;
         from.saldo += valor;
